@@ -100,3 +100,8 @@ which will give following
 }
 ```
 `public_key` is used for verification of JWT tokens.
+
+
+## Collection
+
+https://api.postman.com/collections/25789989-c98b75c4-0700-4453-b0f2-3661d64b85bd?access_key=PMAT-01GZ9R8WSMY91FA70DGFM5DHR2
