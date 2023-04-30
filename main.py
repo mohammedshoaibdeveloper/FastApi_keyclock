@@ -75,32 +75,35 @@ async def read_own_items(current_user: User = Depends(get_current_active_user)):
 
 
 import os
+import requests
+
 
 keycloak_host = 'localhost'
 keycloak_port = '8080'
 realm = 'master'
 client_id = 'login-app'
 client_secret = 'openid-connect'
-admin_user = 'admin'
-admin_password = 'admin'
 grant_type = 'password'
 
 @app.post('/hsai/keycloak/login', status_code=200)
 async def authenticate_user(user: str, pswrd: str):
     '''Endpoint to authenticate user from KeyCloak'''
-    # try:
-    url = f"http://{keycloak_host}:{keycloak_port}/auth/realms/{realm}/protocol/{client_secret}/token"
-    payload = f'client_id={client_id}&username={user}&password={pswrd}&grant_type={grant_type}'
-    headers = {
-    'Content-Type': 'application/x-www-form-urlencoded'
-    }
+    try:
+        url = f"http://{keycloak_host}:{keycloak_port}/auth/realms/{realm}/protocol/{client_secret}/token"
+        payload = f'client_id={client_id}&username={user}&password={pswrd}&grant_type={grant_type}'
+        headers = {
+        'Content-Type': 'application/x-www-form-urlencoded'
+        }
 
-    response = requests.request("POST", url, headers=headers, data=payload)
-    token = response.json()['access_token']
-    print(response.json())
-    return {'Message': 'User Is Authenticated',
-        'Data': {'Token_Info': token
-            }}
+        response = requests.request("POST", url, headers=headers, data=payload)
+        response.raise_for_status()
+        token = response.json()['access_token']
+        return {'Message': 'User Is Authenticated',
+                'Data': {'Token_Info': token}}
+    except requests.HTTPError as err:
+        return {'Message': 'Failed to Authenticate User',
+                'Error': str(err)}
+
 
 
 @app.get("/hsai/keycloak/getdetails/")
